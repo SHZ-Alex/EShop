@@ -1,6 +1,6 @@
-namespace Catalog.API.Products.Create.Endpoint;
+namespace Catalog.API.Endpoints.Products.Post;
 
-public record CreateProductRequest(
+public record PostProductRequest(
     string Name,
     List<string> Category,
     string Description,

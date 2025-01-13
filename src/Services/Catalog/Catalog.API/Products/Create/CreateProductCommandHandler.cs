@@ -1,4 +1,4 @@
-using Catalog.API.Models;
+using Catalog.API.Data;
 using Common.CQRS;
 using Marten;
 

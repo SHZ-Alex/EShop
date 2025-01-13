@@ -1,24 +1,26 @@
 using Carter;
+using Catalog.API.Products.Create;
 using Mapster;
 using MediatR;
 
-namespace Catalog.API.Products.Create.Endpoint;
+namespace Catalog.API.Endpoints.Products.Post;
 
-public class CreateProductEndpoint : ICarterModule
+public class PostProductEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/products", async (CreateProductRequest request, ISender mediator) =>
+        app.MapPost("/products", async (PostProductRequest request, ISender mediator) =>
         {
             var command = request.Adapt<CreateProductCommand>();
             var result = await mediator.Send(command);
             
-            var response = new CreateProductResponse(result.Id);
+            var response = new PostProductResponse(result.Id);
             return Results.Created($"/products/{response.Id}", response);
         })
         .WithName("CreateProduct")
-        .Produces<CreateProductResponse>(StatusCodes.Status201Created)
+        .Produces<PostProductResponse>(StatusCodes.Status201Created)
         .ProducesProblem(StatusCodes.Status400BadRequest)
+        .ProducesProblem(StatusCodes.Status404NotFound)
         .WithSummary("Creates a new product")
         .WithDescription("Creates a new product");
     }
