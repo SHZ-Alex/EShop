@@ -1,6 +1,21 @@
+version: '3.8'
+
 services:
   catalogdb:
     image: postgres:latest
 
+  catalog.api:
+    image: ${DOCKER_REGISTRY-}catalogapi
+    build:
+      context: .
+      dockerfile: Services/Catalog/Catalog.API/Dockerfile
+      
+  basketdb:
+    image: mcr.microsoft.com/mssql/server:latest
+
+  distributedcache:
+    image: redis
+
 volumes:
   postgres_catalog:
+  basketdb_data:

@@ -3,7 +3,9 @@ using Catalog.API.Data.InitialData;
 using Common.Behaviors;
 using Common.ExceptionsHandler;
 using FluentValidation;
+using HealthChecks.UI.Client;
 using Marten;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,16 +20,26 @@ builder.Services.AddMediatR(c =>
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
+var dbConnection = builder.Configuration.GetConnectionString("Database")!;
+
 builder.Services.AddMarten(c =>
 { 
-    c.Connection(builder.Configuration.GetConnectionString("Database")!);
+    c.Connection(dbConnection);
 }).UseLightweightSessions().InitializeWith<ProductInitialData>();
+
+builder.Services.AddHealthChecks()
+    .AddNpgSql(dbConnection);
 
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
 var app = builder.Build();
 
-app.MapCarter();
+app.MapCarter();    
 app.UseExceptionHandler(opt => {});
+
+app.UseHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.Run();
