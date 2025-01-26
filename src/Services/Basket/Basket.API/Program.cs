@@ -4,6 +4,8 @@ using Basket.API.Repositories;
 using Common.Behaviors;
 using Common.ExceptionsHandler;
 using FluentValidation;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,11 +30,13 @@ builder.Services.AddMediatR(c =>
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
+var redis = builder.Configuration.GetConnectionString("Redis")!;
+
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.Decorate<IBasketRepository, CacheBasketRepository>();
 builder.Services.AddStackExchangeRedisCache(opt =>
 {
-    opt.Configuration = builder.Configuration.GetConnectionString("Redis");
+    opt.Configuration = redis;
 });
 
 // TODO: DbContext
@@ -45,6 +49,10 @@ builder.Services.AddDbContext<BasketDbContext>(options =>
 
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
+builder.Services.AddHealthChecks()
+    .AddSqlServer(connectionString)
+    .AddRedis(redis);
+
 var app = builder.Build();
 
 app.UseSwagger();
@@ -55,4 +63,10 @@ app.UseSwaggerUI(c =>
 
 app.MapControllers();
 app.UseExceptionHandler(_ => { });
+
+app.UseHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
 app.Run();
