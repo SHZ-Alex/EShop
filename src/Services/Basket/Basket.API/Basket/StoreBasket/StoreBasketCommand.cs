@@ -1,6 +1,6 @@
 using Basket.API.Models;
 using Common.CQRS;
 
-namespace Basket.API.Busket.StoreBasket;
+namespace Basket.API.Basket.StoreBasket;
 
 public record StoreBasketCommand(ShoppingCart Cart) : ICommand;

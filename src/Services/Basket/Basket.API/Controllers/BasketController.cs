@@ -1,6 +1,6 @@
-using Basket.API.Busket.DeleteBasket;
-using Basket.API.Busket.GetBasket;
-using Basket.API.Busket.StoreBasket;
+using Basket.API.Basket.DeleteBasket;
+using Basket.API.Basket.GetBasket;
+using Basket.API.Basket.StoreBasket;
 using Basket.API.Controllers.Contracts.Requests;
 using Basket.API.Models;
 using MediatR;

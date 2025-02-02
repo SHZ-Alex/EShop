@@ -1,5 +1,5 @@
 using Common.CQRS;
 
-namespace Basket.API.Busket.DeleteBasket;
+namespace Basket.API.Basket.DeleteBasket;
 
 public record DeleteBasketCommand(string UserName) : ICommand;

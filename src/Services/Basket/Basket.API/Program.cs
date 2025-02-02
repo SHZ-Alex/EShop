@@ -3,6 +3,7 @@ using Basket.API.Data;
 using Basket.API.Repositories;
 using Common.Behaviors;
 using Common.ExceptionsHandler;
+using Discount.Grpc;
 using FluentValidation;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -20,12 +21,25 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 builder.Services.AddMediatR(c =>
 {
     c.RegisterServicesFromAssembly(typeof(Program).Assembly);
     c.AddOpenBehavior(typeof(ValidationBehavior<,>));
     c.AddOpenBehavior(typeof(LoggingBehavior<,>));
+});
+
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(opt =>
+{
+    opt.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+
+    return handler;
 });
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();

@@ -2,7 +2,7 @@ using Basket.API.Repositories;
 using Common.CQRS;
 using MediatR;
 
-namespace Basket.API.Busket.DeleteBasket;
+namespace Basket.API.Basket.DeleteBasket;
 
 public class DeleteBasketCommandHandler(IBasketRepository basketRepository) : ICommandHandler<DeleteBasketCommand>
 {
