@@ -13,6 +13,9 @@ services:
   basketdb:
     image: mcr.microsoft.com/mssql/server:latest
 
+  orderdb:
+    image: mcr.microsoft.com/mssql/server:latest
+
   distributedcache:
     image: redis
 

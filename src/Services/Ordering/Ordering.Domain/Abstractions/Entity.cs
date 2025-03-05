@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Ordering.Domain.Abstractions;
 
 public abstract class Entity<T> : IEntity<T>

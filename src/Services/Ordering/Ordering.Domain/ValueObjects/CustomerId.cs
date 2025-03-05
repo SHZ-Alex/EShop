@@ -1,3 +1,3 @@
 namespace Ordering.Domain.ValueObjects;
 
-public record CustomerId(long Id);
+public record CustomerId(Guid Id);

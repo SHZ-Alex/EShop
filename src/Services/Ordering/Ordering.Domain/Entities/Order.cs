@@ -9,12 +9,12 @@ public class Order : Aggregate<OrderId>
     private readonly List<OrderItem> _orderItems = [];
     public IReadOnlyList<OrderItem> OrderItems => _orderItems.AsReadOnly();
     
-    public CustomerId CustomerId { get; set; }
-    public OrderName OrderName { get; set; }
-    public required Address BillingAddress { get; set; }
-    public required Address ShippingAddress { get; set; }
-    public required Payment Payment { get; set; }
-    public required OrderStatus Status { get; set; }
+    public CustomerId CustomerId { get; private set; } = null!;
+    public OrderName OrderName { get; private set; } = null!;
+    public Address BillingAddress { get; private set; } = null!;
+    public Address ShippingAddress { get; private set; } = null!;
+    public Payment Payment { get; private set; } = null!;
+    public OrderStatus Status { get; private set; }
     
     public decimal OrderTotal
     {
@@ -52,7 +52,7 @@ public class Order : Aggregate<OrderId>
         AddDomainEvent(new OrderUpdatedEvent(this));
     }
 
-    public void Add(ProductId productId, decimal price, int quantity)
+    public void AddProduct(ProductId productId, decimal price, int quantity)
     {
         var orderItem = new OrderItem
         {
@@ -65,7 +65,7 @@ public class Order : Aggregate<OrderId>
         _orderItems.Add(orderItem);
     }
 
-    public void Remove(ProductId productId)
+    public void RemoveProduct(ProductId productId)
     {
         var orderItem = _orderItems.FirstOrDefault(x => x.ProductId == productId);
         

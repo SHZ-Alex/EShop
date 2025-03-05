@@ -7,7 +7,7 @@ public abstract class Aggregate<TId> : Entity<TId>, IAggregate<TId>
     public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
     
     public void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
-    public bool HasDomainEvents() => _domainEvents.Count != 0;
+    public bool HasDomainEvents => _domainEvents.Count != 0;
 
     public IDomainEvent[] ClearDomainEvents()
     {
