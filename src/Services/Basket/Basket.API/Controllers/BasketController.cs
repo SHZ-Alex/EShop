@@ -1,3 +1,4 @@
+using Basket.API.Basket.CheckoutBasket;
 using Basket.API.Basket.DeleteBasket;
 using Basket.API.Basket.GetBasket;
 using Basket.API.Basket.StoreBasket;
@@ -23,12 +24,18 @@ public class BasketController(ISender sender) : BaseController
         return Ok();
     }
 
+    [HttpPost("checkout")]
+    public async Task<IActionResult> Checkout([FromBody] CheckoutBasketCommand command)
+    {
+        await sender.Send(command);
+        return Ok();
+    }
+
     [HttpPost]
     public async Task<IActionResult> UpdateBasket([FromBody] StoreBasketRequest request)
     {
         var command = new StoreBasketCommand(new ShoppingCart
         {
-            Id = 0,
             UserName = request.UserName,
             Items = request.Items
         });

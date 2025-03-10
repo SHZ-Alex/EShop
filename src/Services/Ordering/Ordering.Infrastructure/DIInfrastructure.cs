@@ -1,3 +1,4 @@
+using Common.Messaging.MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -19,6 +20,8 @@ public static class DiInfrastructure
         builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
         builder.Services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
         builder.Services.AddScoped<IOrderDatabaseRepository, OrderDatabaseRepository>();
+        
+        builder.Services.AddMessageBroker(builder.Configuration);
         
         builder.Services.AddDbContext<ApplicationDbContext>((services, opt) =>
         {

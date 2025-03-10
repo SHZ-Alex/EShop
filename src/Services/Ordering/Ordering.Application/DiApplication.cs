@@ -15,7 +15,5 @@ public static class DiApplication
             c.AddOpenBehavior(typeof(ValidationBehavior<,>));
             c.AddOpenBehavior(typeof(LoggingBehavior<,>));
         });
-        
-        
     }
 }
