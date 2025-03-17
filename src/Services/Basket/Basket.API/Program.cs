@@ -3,9 +3,12 @@ using Basket.API.Data;
 using Basket.API.Repositories;
 using Common.Behaviors;
 using Common.ExceptionsHandler;
+using Common.Messaging.Events;
+using Common.Messaging.MassTransit;
 using Discount.Grpc;
 using FluentValidation;
 using HealthChecks.UI.Client;
+using MassTransit;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
@@ -62,6 +65,8 @@ builder.Services.AddDbContext<BasketDbContext>(options =>
     options.UseSqlServer(connectionString).UseSnakeCaseNamingConvention());
 
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+
+builder.Services.AddMessageBroker(builder.Configuration, []);
 
 builder.Services.AddHealthChecks()
     .AddSqlServer(connectionString)

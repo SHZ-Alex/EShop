@@ -11,7 +11,8 @@ public class StoreBasketCommandHandler(IBasketRepository basketRepository,
 {
     public async Task<Unit> Handle(StoreBasketCommand request, CancellationToken cancellationToken)
     {
-        await DeductDiscount(request, cancellationToken);
+        // TODO: Uncomment
+        //await DeductDiscount(request, cancellationToken);
         await basketRepository.StoreBasket(request.Cart, cancellationToken);
         
         return new Unit();

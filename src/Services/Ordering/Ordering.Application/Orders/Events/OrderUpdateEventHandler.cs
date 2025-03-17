@@ -1,12 +1,15 @@
 using MediatR;
+using Ordering.Application.Dtos;
+using Ordering.Application.Interfaces.MessageBroker;
 using Ordering.Domain.Events;
 
 namespace Ordering.Application.Orders.Events;
 
-public class OrderUpdateEventHandler : INotificationHandler<OrderUpdatedEvent>
+public class OrderUpdateEventHandler(IMessageBrokerService messageBrokerService) : INotificationHandler<OrderUpdatedEvent>
 {
-    public Task Handle(OrderUpdatedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(OrderUpdatedEvent notification, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var orderDto = OrderDto.MapFromOrder(notification.Order);
+        await messageBrokerService.PublishOrderUpdatedEvent(orderDto, cancellationToken);
     }
 }

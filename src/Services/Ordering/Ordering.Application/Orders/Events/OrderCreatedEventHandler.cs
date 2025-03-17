@@ -1,13 +1,16 @@
 using MediatR;
+using Ordering.Application.Dtos;
+using Ordering.Application.Interfaces.MessageBroker;
 using Ordering.Domain.Events;
 
 namespace Ordering.Application.Orders.Events;
 
-public class OrderCreatedEventHandler
+public class OrderCreatedEventHandler(IMessageBrokerService messageBrokerService)
     : INotificationHandler<OrderCreatedEvent>
 {
-    public Task Handle(OrderCreatedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(OrderCreatedEvent notification, CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;
+        var orderDto = OrderDto.MapFromOrder(notification.Order);
+        await messageBrokerService.PublishOrderCreatedEvent(orderDto, cancellationToken);
     }
 }

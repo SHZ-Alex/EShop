@@ -11,6 +11,7 @@ public class CheckoutBasketCommandHandler(IBasketRepository basketRepository,
 {
     public async Task<Unit> Handle(CheckoutBasketCommand request, CancellationToken cancellationToken)
     {
+        //TODO: AnyASync??
         var basket = await basketRepository.GetBasket(request.Dto.UserName, cancellationToken);
 
         var eventMessage = new BasketCheckoutEvent
