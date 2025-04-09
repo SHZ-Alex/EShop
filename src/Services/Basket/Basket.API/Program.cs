@@ -3,12 +3,10 @@ using Basket.API.Data;
 using Basket.API.Repositories;
 using Common.Behaviors;
 using Common.ExceptionsHandler;
-using Common.Messaging.Events;
 using Common.Messaging.MassTransit;
 using Discount.Grpc;
 using FluentValidation;
 using HealthChecks.UI.Client;
-using MassTransit;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +22,7 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// TODO: Replace for BLL Handlers
 builder.Services.AddMediatR(c =>
 {
     c.RegisterServicesFromAssembly(typeof(Program).Assembly);
@@ -32,18 +31,18 @@ builder.Services.AddMediatR(c =>
 });
 
 builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(opt =>
-{
-    opt.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
-})
-.ConfigurePrimaryHttpMessageHandler(() =>
-{
-    var handler = new HttpClientHandler
     {
-        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-    };
+        opt.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+    })
+    .ConfigurePrimaryHttpMessageHandler(() =>
+    {
+        var handler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        };
 
-    return handler;
-});
+        return handler;
+    });
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
@@ -51,14 +50,11 @@ var redis = builder.Configuration.GetConnectionString("Redis")!;
 
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.Decorate<IBasketRepository, CacheBasketRepository>();
-builder.Services.AddStackExchangeRedisCache(opt =>
-{
-    opt.Configuration = redis;
-});
+builder.Services.AddStackExchangeRedisCache(opt => { opt.Configuration = redis; });
 
 // TODO: DbContext
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<BasketDbContext>(options =>
@@ -75,10 +71,7 @@ builder.Services.AddHealthChecks()
 var app = builder.Build();
 
 app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-});
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
 
 app.MapControllers();
 app.UseExceptionHandler(_ => { });
